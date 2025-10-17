@@ -12,7 +12,7 @@ BPP's Approval Management System is a streamlined application designed to simpli
  - **Audit Trail:** Maintains a complete history of actions and decisions for compliance and transparency.
  - **Dashboard & Reporting:** Visual dashboards and downloadable reports for monitoring approval metrics and bottlenecks.
  - **Integration Capability:** Can be integrated with other organizational systems for seamless data flow.
- - 
+
 ## Yet to Integrate
 - **Attachments & Comments:** Allows users to add supporting documents and comments to requests.
 
