@@ -18,7 +18,6 @@ import {
   Home,
   Map,
   CloudUpload,
-  RateReview,
   Nature,
   ElectricalServices,
   Engineering,
@@ -70,53 +69,26 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
         label: "Upload Files",
         icon: <CloudUpload />,
         path: "/upload",
-      },
-      {
-        id: "reviews",
-        label: "Reviews",
-        icon: <RateReview />,
-        path: "/reviews",
-      },
+      }
     ],
-    "Environmental": [
-      {
-        id: "environmental",
-        label: "Environmental",
-        icon: <Nature />,
-        path: "/environmental",
-      },
-    ],
-    "Electrical": [
-      {
-        id: "electrical",
-        label: "Electrical",
-        icon: <ElectricalServices />,
-        path: "/electrical",
-      },
-    ],
-    "Civil": [
-      {
-        id: "civil",
-        label: "Civil",
-        icon: <Engineering />,
-        path: "/civil",
-      },
-    ],
-    "Permitting": [
-      {
-        id: "permitting",
-        label: "Permitting",
-        icon: <Assignment />,
-        path: "/permitting",
-      },
-    ],
+    "Environmental": [], // All review departments only need Project Review
+    "Electrical": [],
+    "Civil": [],
+    "Permitting": [],
   };
 
   // Get menu items based on user's department
   const departmentItems = user?.department ? departmentMenuItems[user.department] || [] : [];
   
-  // Combine common items with department-specific items
-  const menuItems = [...commonMenuItems, ...departmentItems];
+  // Create ordered menu items
+  const orderedItems = [
+    ...commonMenuItems, // Dashboard and Project Review
+    departmentItems.find(item => item.id === "upload"), // Upload Files (only for Solar and Wind)
+    ...departmentItems.filter(item => !["upload"].includes(item.id)), // Department specific items
+  ].filter(Boolean);
+  
+  // Combine ordered items with any remaining department-specific items
+  const menuItems = orderedItems;
 
   const handleNavigation = (path, id) => {
     if (onNavigate) {
@@ -317,7 +289,7 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
                       fontWeight: 500,
                     }}
                   >
-                    {user.role}
+                    {/* {user.role} */}
                   </Typography>
                 </Box>
               </Box>
