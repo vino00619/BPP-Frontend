@@ -194,8 +194,8 @@ function App() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis 
                         dataKey="department" 
-                        angle={-45}
-                        textAnchor="end"
+                        angle={0}
+                        textAnchor="middle"
                         height={60}
                       />
                       <YAxis />
