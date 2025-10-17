@@ -8,7 +8,7 @@ import Sidebar from './components/Layout/Sidebar.jsx'
 import ProjectReview from './components/Dashboard/ProjectReview.jsx'
 import FileUpload from './components/FileUpload.jsx'
 import Login from './components/Login.jsx'
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -145,13 +145,97 @@ function App() {
   const renderDashboardContent = () => {
     return (
       <Box>
-        <Box sx={{ mb: 4 }}>
+        {/* <Box sx={{ mb: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Dashboard
           </Typography>
           <Typography variant="body1" color="text.secondary" paragraph>
             Welcome to your project dashboard. Monitor all your projects and activities from here.
           </Typography>
+        </Box> */}
+
+        {/* Approval Status Chart */}
+        <Box sx={{ mb: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Approval Status Overview
+              </Typography>
+              <Box sx={{ width: '100%', height: 400 }}>
+                {files.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={(() => {
+                        const deptStats = {};
+                        console.log('Processing files for chart:', files);
+                        
+                        files.forEach(file => {
+                          const statuses = typeof file.approvalStatus === 'string'
+                            ? JSON.parse(file.approvalStatus || '{}')
+                            : file.approvalStatus || {};
+                          
+                          Object.entries(statuses).forEach(([dept, status]) => {
+                            if (!deptStats[dept]) {
+                              deptStats[dept] = {
+                                department: dept,
+                                approved: 0,
+                                pending: 0,
+                                rejected: 0
+                              };
+                            }
+                            deptStats[dept][status]++;
+                          });
+                        });
+
+                        return Object.values(deptStats);
+                      })()}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="department" 
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend 
+                        verticalAlign="top"
+                        height={36}
+                      />
+                      <Bar 
+                        dataKey="approved" 
+                        fill="#4caf50" 
+                        name="Approved"
+                      />
+                      <Bar 
+                        dataKey="pending" 
+                        fill="#ff9800" 
+                        name="Pending"
+                      />
+                      <Bar 
+                        dataKey="rejected" 
+                        fill="#f44336" 
+                        name="Rejected"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <Box sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center' 
+                  }}>
+                    <Typography variant="body1" color="text.secondary">
+                      No data available to display chart
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
 
         {/* Error Message */}
@@ -333,7 +417,7 @@ function App() {
         </Box>
 
         {/* Quick Actions */}
-        <Box sx={{ mt: 4 }}>
+        {/* <Box sx={{ mt: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -352,7 +436,7 @@ function App() {
               </Box>
             </CardContent>
           </Card>
-        </Box>
+        </Box> */}
       </Box>
     );
   }

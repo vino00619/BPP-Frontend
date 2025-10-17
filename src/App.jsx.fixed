@@ -1,0 +1,151 @@
+import React, { useState, useEffect, useCallback } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
+import { CssBaseline, Typography, Card, CardContent, Button, Box, CircularProgress, Alert, Chip, Grid } from '@mui/material'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { Dashboard, Analytics, Settings, People, Inventory, Description, Map, InsertDriveFile } from '@mui/icons-material'
+import theme from './theme/theme.js'
+import Sidebar from './components/Layout/Sidebar.jsx'
+import ProjectReview from './components/Dashboard/ProjectReview.jsx'
+import FileUpload from './components/FileUpload.jsx'
+import Login from './components/Login.jsx'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts'
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+
+// ... [rest of the imports and component code] ...
+
+function App() {
+  // ... [all the state and helper functions remain the same] ...
+
+  const renderDashboardContent = () => {
+    return (
+      <Box>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            Welcome to your project dashboard. Monitor all your projects and activities from here.
+          </Typography>
+        </Box>
+
+        {/* Approval Status Chart */}
+        <Box sx={{ mb: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Approval Status Overview
+              </Typography>
+              <Box sx={{ width: '100%', height: 400 }}>
+                {files.length > 0 && (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={(() => {
+                        // Process data for chart
+                        const deptStats = {};
+                        console.log('Processing files for chart:', files);
+                        
+                        files.forEach(file => {
+                          const statuses = typeof file.approvalStatus === 'string'
+                            ? JSON.parse(file.approvalStatus || '{}')
+                            : file.approvalStatus || {};
+                          
+                          Object.entries(statuses).forEach(([dept, status]) => {
+                            if (!deptStats[dept]) {
+                              deptStats[dept] = {
+                                department: dept,
+                                approved: 0,
+                                pending: 0,
+                                rejected: 0
+                              };
+                            }
+                            deptStats[dept][status]++;
+                          });
+                        });
+
+                        return Object.values(deptStats);
+                      })()}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="department" 
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend 
+                        verticalAlign="top"
+                        height={36}
+                      />
+                      <Bar 
+                        dataKey="approved" 
+                        fill="#4caf50" 
+                        name="Approved"
+                      />
+                      <Bar 
+                        dataKey="pending" 
+                        fill="#ff9800" 
+                        name="Pending"
+                      />
+                      <Bar 
+                        dataKey="rejected" 
+                        fill="#f44336" 
+                        name="Rejected"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+                {files.length === 0 && (
+                  <Box sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center' 
+                  }}>
+                    <Typography variant="body1" color="text.secondary">
+                      No data available to display chart
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* Rest of the dashboard content */}
+        {/* ... */}
+      </Box>
+    );
+  };
+
+  // ... [rest of the component code remains the same] ...
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={
+            isAuthenticated ? 
+            <Navigate to="/dashboard" replace /> : 
+            <Login onLogin={() => setIsAuthenticated(true)} />
+          } />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+export default App
