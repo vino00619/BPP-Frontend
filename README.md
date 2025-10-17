@@ -3,7 +3,7 @@
 BPP's Approval Management System is a streamlined application designed to simplify and automate approval workflows within organizations. Tailored for efficiency, it enables users to submit requests, track approvals, and manage decision-making processes with ease. With an intuitive interface and robust notification system, BPP's Approval Management System ensures requests are processed promptly and transparently, reducing bottlenecks and enhancing productivity. Ideal for teams seeking to modernize their approval procedures and maintain clear records of organizational decisions.
 
 For frontend React.JS is used and hosted in **Netlify**.
-Backend is hosted in **Replit**.
+For backend Node.JS + Express.JS and PostgreSQL is used and hosted in **Replit**.
 
 ## Core Funcitonalities
 
