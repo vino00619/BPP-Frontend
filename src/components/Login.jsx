@@ -209,13 +209,54 @@ const Login = ({ onLogin }) => {
         height: "100vh",
         width: "100vw",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        pt: 8,
         bgcolor: "rgb(243, 246, 249)",
         backgroundImage:
           "linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5))",
       }}
     >
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h2"
+          color="primary"
+          fontSize={"5rem"}
+          sx={{ fontWeight: 600, lineHeight: 1.2 }}
+        >
+          Blue
+        </Typography>
+        <Typography
+          variant="h2"
+          color="primary"
+          fontSize={"5rem"}
+          sx={{ fontWeight: 600, lineHeight: 1.2 }}
+        >
+          Power
+        </Typography>
+        <Typography
+          variant="h2"
+          color="primary"
+          fontSize={"5rem"}
+          sx={{ fontWeight: 600, lineHeight: 1.2 }}
+        >
+          Partners
+        </Typography>
+        
+      </Box>
+      <Box sx={{ mb: 4 }}>
+        
+        <Typography
+          variant="h2"
+          color="primary"
+          fontSize={"2rem"}
+          sx={{ fontWeight: 600, lineHeight: 1.2 }}
+        >
+          Approval Management System
+        </Typography>
+        
+      </Box>
       <Box
         component="form"
         onSubmit={handleSubmit}
