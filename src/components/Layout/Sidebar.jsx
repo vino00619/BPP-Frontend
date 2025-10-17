@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   List,
@@ -11,6 +12,7 @@ import {
   Typography,
   Avatar,
   Divider,
+  Button,
 } from "@mui/material";
 import {
   Home,
@@ -21,14 +23,31 @@ import {
   ElectricalServices,
   Engineering,
   Assignment,
+  LogoutOutlined,
 } from "@mui/icons-material";
 
 const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
   const theme = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const navigate = useNavigate();
 
-  // Navigation menu items as specified
-  const menuItems = [
+  const handleSignOut = () => {
+    try {
+      // First navigate to login
+      navigate('/login', { replace: true });
+      // Then clear the localStorage
+      localStorage.clear();
+      // Force a page reload to clear any remaining state
+      window.location.reload();
+    } catch (error) {
+      console.error('Sign out error:', error);
+      // Fallback: force redirect to login
+      window.location.href = '/login';
+    }
+  };
+
+  // Common menu items that appear for all users
+  const commonMenuItems = [
     {
       id: "dashboard",
       label: "Dashboard",
@@ -37,47 +56,67 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
     },
     {
       id: "projects",
-      label: "Projects",
+      label: "Project Review",
       icon: <Map />,
       path: "/projects",
     },
-    {
-      id: "upload",
-      label: "Upload Files",
-      icon: <CloudUpload />,
-      path: "/upload",
-    },
-    {
-      id: "reviews",
-      label: "Reviews",
-      icon: <RateReview />,
-      path: "/reviews",
-    },
-    {
-      id: "environmental",
-      label: "Environmental",
-      icon: <Nature />,
-      path: "/environmental",
-    },
-    {
-      id: "electrical",
-      label: "Electrical",
-      icon: <ElectricalServices />,
-      path: "/electrical",
-    },
-    {
-      id: "civil",
-      label: "Civil",
-      icon: <Engineering />,
-      path: "/civil",
-    },
-    {
-      id: "permitting",
-      label: "Permitting",
-      icon: <Assignment />,
-      path: "/permitting",
-    },
   ];
+
+  // Department-specific menu items
+  const departmentMenuItems = {
+    "Solar and Wind": [
+      {
+        id: "upload",
+        label: "Upload Files",
+        icon: <CloudUpload />,
+        path: "/upload",
+      },
+      {
+        id: "reviews",
+        label: "Reviews",
+        icon: <RateReview />,
+        path: "/reviews",
+      },
+    ],
+    "Environmental": [
+      {
+        id: "environmental",
+        label: "Environmental",
+        icon: <Nature />,
+        path: "/environmental",
+      },
+    ],
+    "Electrical": [
+      {
+        id: "electrical",
+        label: "Electrical",
+        icon: <ElectricalServices />,
+        path: "/electrical",
+      },
+    ],
+    "Civil": [
+      {
+        id: "civil",
+        label: "Civil",
+        icon: <Engineering />,
+        path: "/civil",
+      },
+    ],
+    "Permitting": [
+      {
+        id: "permitting",
+        label: "Permitting",
+        icon: <Assignment />,
+        path: "/permitting",
+      },
+    ],
+  };
+
+  // Get menu items based on user's department
+  const departmentItems = user?.department ? departmentMenuItems[user.department] || [] : [];
+  
+  // Combine common items with department-specific items
+  const menuItems = [...commonMenuItems, ...departmentItems];
 
   const handleNavigation = (path, id) => {
     if (onNavigate) {
@@ -124,7 +163,8 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
             lineHeight: 1.2,
           }}
         >
-          Project Management
+          {user?.department || "Project Management"}
+          {user?.department && " Department"}
         </Typography>
       </Box>
 
@@ -273,12 +313,37 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     display: "block",
+                    mb: 0.5
                   }}
                 >
-                  {user.email || "user@example.com"}
+                  {user.role || "Role not assigned"}
                 </Typography>
+
               </Box>
             </Box>
+            
+            {/* Sign Out Button */}
+            <Button
+              variant="contained"
+              color="error"
+              fullWidth
+              startIcon={<LogoutOutlined />}
+              onClick={handleSignOut}
+              sx={{
+                mt: 2,
+                py: 1,
+                borderRadius: 2,
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                '&:hover': {
+                  backgroundColor: theme.palette.error.dark,
+                },
+                transition: 'all 0.3s ease',
+                boxShadow: 1,
+              }}
+            >
+              Sign Out
+            </Button>
           </Box>
         </>
       )}
@@ -290,6 +355,8 @@ Sidebar.propTypes = {
   user: PropTypes.shape({
     name: PropTypes.string,
     email: PropTypes.string,
+    role: PropTypes.string,
+    department: PropTypes.string,
   }),
   width: PropTypes.number,
   currentView: PropTypes.string,

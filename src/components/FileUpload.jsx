@@ -30,6 +30,8 @@ import {
   Error,
   Description,
   Map,
+  Send,
+  Done,
 } from '@mui/icons-material';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -379,7 +381,7 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10, maxSize = 50 * 1024 * 1024 }
                       variant="outlined"
                       size="small"
                       sx={{ mr: 1 }}
-                      disabled={file.status !== 'completed'}
+                      disabled={file.status === 'error' || !file.parsed}
                       onClick={() => {
                         if (file.parsed && file.parsed.data) {
                           if (file.name.endsWith('.kmz') || file.name.endsWith('.kml')) {
@@ -394,6 +396,156 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10, maxSize = 50 * 1024 * 1024 }
                       }}
                     >
                       View
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{ mr: 1 }}
+                      disabled={file.status === 'under_review' || file.status !== 'completed'}
+                      startIcon={file.status === 'under_review' ? <Done /> : <Send />}
+                      onClick={async () => {
+                        // Update local state
+                        setUploadedFiles(prev => prev.map(f => 
+                          f.id === file.id 
+                            ? { ...f, status: 'under_review' }
+                            : f
+                        ));
+
+                        // Generate a unique file ID
+                        const fileId = `FILE${file.id}`;
+
+                        // Create new file entry
+                        const newFile = {
+                          id: fileId,
+                          filename: file.name,
+                          version: 1,
+                          uploadedBy: "SW001", // You might want to get this from your auth context
+                          uploadDate: new Date().toISOString(),
+                          status: "under_review",
+                          type: file.name.split('.').pop().toLowerCase(),
+                          description: `Uploaded file: ${file.name}`,
+                          approvalStatus: {
+                            Environmental: "pending",
+                            Electrical: "pending",
+                            Civil: "pending",
+                            Permitting: "pending"
+                          },
+                          versions: [
+                            {
+                              version: 1,
+                              uploadDate: new Date().toISOString(),
+                              uploadedBy: "SW001",
+                              changes: "Initial submission"
+                            }
+                          ]
+                        };
+
+                        // Create initial comment placeholders for each department
+                        const departmentComments = [
+                          {
+                            id: `COM_ENV_${fileId}`,
+                            fileId: fileId,
+                            userId: "ENV001",
+                            department: "Environmental",
+                            comment: "",
+                            timestamp: new Date().toISOString(),
+                            status: "pending",
+                            replies: []
+                          },
+                          {
+                            id: `COM_ELE_${fileId}`,
+                            fileId: fileId,
+                            userId: "ELE001",
+                            department: "Electrical",
+                            comment: "",
+                            timestamp: new Date().toISOString(),
+                            status: "pending",
+                            replies: []
+                          },
+                          {
+                            id: `COM_CIV_${fileId}`,
+                            fileId: fileId,
+                            userId: "CIV001",
+                            department: "Civil",
+                            comment: "",
+                            timestamp: new Date().toISOString(),
+                            status: "pending",
+                            replies: []
+                          },
+                          {
+                            id: `COM_PER_${fileId}`,
+                            fileId: fileId,
+                            userId: "PER001",
+                            department: "Permitting",
+                            comment: "",
+                            timestamp: new Date().toISOString(),
+                            status: "pending",
+                            replies: []
+                          }
+                        ];
+
+                        // Create approval tracking entry
+                        const approvalEntry = {
+                          id: `APR_${fileId}`,
+                          fileId: fileId,
+                          version: 1,
+                          approvals: [
+                            {
+                              department: "Environmental",
+                              status: "pending",
+                              reviewerId: "ENV001",
+                              timestamp: null,
+                              comments: ""
+                            },
+                            {
+                              department: "Electrical",
+                              status: "pending",
+                              reviewerId: "ELE001",
+                              timestamp: null,
+                              comments: ""
+                            },
+                            {
+                              department: "Civil",
+                              status: "pending",
+                              reviewerId: "CIV001",
+                              timestamp: null,
+                              comments: ""
+                            },
+                            {
+                              department: "Permitting",
+                              status: "pending",
+                              reviewerId: "PER001",
+                              timestamp: null,
+                              comments: ""
+                            }
+                          ]
+                        };
+
+                        try {
+                          // Read current data
+                          const response = await fetch('/src/data/mockData.json');
+                          const data = await response.json();
+                          
+                          // Add new file to the files array
+                          data.files.push(newFile);
+                          // Add comment placeholders to the comments array
+                          data.comments.push(...departmentComments);
+                          // Add approval entry
+                          data.approvals.push(approvalEntry);
+
+                          // In a real application, you would make an API call here
+                          // For now, we'll log the updated data
+                          console.log('Updated mock data:', data);
+                          console.log('File sent for approval:', newFile);
+                          console.log('Department comments initialized:', departmentComments);
+                          console.log('Approval tracking created:', approvalEntry);
+                        } catch (error) {
+                          console.error('Error updating file status:', error);
+                          // You might want to show an error message to the user
+                        }
+                      }}
+                    >
+                      {file.status === 'under_review' ? 'Sent for Approval' : 'Send for Approval'}
                     </Button>
                   </ListItemSecondaryAction>
                 </ListItem>

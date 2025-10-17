@@ -1,23 +1,35 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline, Typography, Card, CardContent, Button, Box } from '@mui/material'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Dashboard, Analytics, Settings, People, Inventory } from '@mui/icons-material'
 import theme from './theme/theme.js'
 import Sidebar from './components/Layout/Sidebar.jsx'
+import ProjectReview from './components/Dashboard/ProjectReview.jsx'
 import FileUpload from './components/FileUpload.jsx'
+import Login from './components/Login.jsx'
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
   const [count, setCount] = useState(0)
   const [currentView, setCurrentView] = useState('/dashboard')
 
-  // User information
-  const user = {
-    name: 'vino00619',
-    email: 'vino00619@example.com'
-  }
+  // Effect to handle authentication state
+  useEffect(() => {
+    const authStatus = localStorage.getItem('isAuthenticated') === 'true';
+    setIsAuthenticated(authStatus);
+  }, []);
+
+  // Get user information from localStorage
+  const getUserInfo = () => {
+    const userInfo = localStorage.getItem('userInfo');
+    return userInfo ? JSON.parse(userInfo) : null;
+  };
 
   // Handle navigation from sidebar
   const handleNavigation = (path, id) => {
@@ -122,24 +134,7 @@ function App() {
   )
 
   const renderProjectsContent = () => (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Projects
-      </Typography>
-      <Typography variant="body1" color="text.secondary" paragraph>
-        Manage your projects and view project details.
-      </Typography>
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Project Management
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Here you can view, create, and manage all your projects.
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+    <ProjectReview user={getUserInfo()} />
   )
 
   const renderUploadContent = () => (
@@ -363,30 +358,62 @@ function FileVisualization({ file }) {
     </Box>
   )
 
+  const MainLayout = () => (
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar 
+        user={getUserInfo()}
+        currentView={currentView}
+        onNavigate={handleNavigation}
+      />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          backgroundColor: theme.palette.background.default,
+          minHeight: '100vh',
+        }}
+      >
+        {renderContent()}
+      </Box>
+    </Box>
+  );
+
+  // Protected Route component
+  const ProtectedRoute = ({ children }) => {
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    if (!isAuth) {
+      return <Navigate to="/login" replace />;
+    }
+    return children;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        {/* Sidebar */}
-        <Sidebar 
-          user={user}
-          currentView={currentView}
-          onNavigate={handleNavigation}
-        />
-        
-        {/* Main Content Area */}
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: 3,
-            backgroundColor: theme.palette.background.default,
-            minHeight: '100vh',
-          }}
-        >
-          {renderContent()}
-        </Box>
-      </Box>
+      <Router>
+        <Routes>
+          {/* Default route redirects to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* Login route */}
+          <Route path="/login" element={
+            isAuthenticated ? 
+            <Navigate to="/dashboard" replace /> : 
+            <Login onLogin={() => setIsAuthenticated(true)} />
+          } />
+          
+          {/* Protected routes */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
     </ThemeProvider>
   )
 }

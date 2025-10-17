@@ -1,0 +1,173 @@
+{
+  "users": [
+    {
+      "id": "SW001",
+      "username": "solarengg",
+      "password": "hashed_password",
+      "name": "Soalr Engineer",
+      "email": "solarengg@company.com",
+      "department": "Solar and Wind",
+      "role": "Design Engineer",
+      "permissions": ["upload_files", "view_comments", "respond_to_comments"],
+      "createdAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ENV001",
+      "username": "enviengg",
+      "password": "hashed_password",
+      "name": "Envi Engineer",
+      "email": "enviengg@company.com",
+      "department": "Environmental",
+      "role": "Environmental Reviewer",
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "createdAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ELE001",
+      "username": "electengg",
+      "password": "hashed_password",
+      "name": "Electric Engineer",
+      "email": "electengg@company.com",
+      "department": "Electrical",
+      "role": "Electrical Reviewer",
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "createdAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "CIV001",
+      "username": "civilengg",
+      "password": "hashed_password",
+      "name": "Civil Engineer",
+      "email": "civilengg@company.com",
+      "department": "Civil",
+      "role": "Civil Reviewer",
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "createdAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "PER001",
+      "username": "permitengg",
+      "password": "hashed_password",
+      "name": "Permit Engineer",
+      "email": "permitengg@company.com",
+      "department": "Permitting",
+      "role": "Permit Reviewer",
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "createdAt": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "files": [
+    {
+      "id": "FILE001",
+      "filename": "solar_panel_design_v1.pdf",
+      "version": 1,
+      "uploadedBy": "SW001",
+      "uploadDate": "2025-10-15T10:30:00Z",
+      "status": "under_review",
+      "type": "design",
+      "description": "Solar panel array layout design",
+      "approvalStatus": {
+        "Environmental": "pending",
+        "Electrical": "pending",
+        "Civil": "pending",
+        "Permitting": "pending"
+      },
+      "versions": [
+        {
+          "version": 1,
+          "uploadDate": "2025-10-15T10:30:00Z",
+          "uploadedBy": "SW001",
+          "changes": "Initial design submission"
+        }
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "id": "COM001",
+      "fileId": "FILE001",
+      "userId": "ENV001",
+      "department": "Environmental",
+      "comment": "Please include environmental impact assessment for the proposed layout",
+      "timestamp": "2025-10-15T11:30:00Z",
+      "status": "open",
+      "replies": [
+        {
+          "id": "REP001",
+          "userId": "SW001",
+          "comment": "Will provide the assessment report by tomorrow",
+          "timestamp": "2025-10-15T13:45:00Z"
+        }
+      ]
+    }
+  ],
+  "approvals": [
+    {
+      "id": "APR001",
+      "fileId": "FILE001",
+      "version": 1,
+      "approvals": [
+        {
+          "department": "Environmental",
+          "status": "pending",
+          "reviewerId": "ENV001",
+          "timestamp": null,
+          "comments": ""
+        },
+        {
+          "department": "Electrical",
+          "status": "pending",
+          "reviewerId": "ELE001",
+          "timestamp": null,
+          "comments": ""
+        },
+        {
+          "department": "Civil",
+          "status": "pending",
+          "reviewerId": "CIV001",
+          "timestamp": null,
+          "comments": ""
+        },
+        {
+          "department": "Permitting",
+          "status": "pending",
+          "reviewerId": "PER001",
+          "timestamp": null,
+          "comments": ""
+        }
+      ]
+    }
+  ],
+  "departmentRoles": {
+    "Solar and Wind": {
+      "permissions": ["upload_files", "view_comments", "respond_to_comments"],
+      "canUploadFiles": true,
+      "canReceiveComments": true,
+      "canApprove": false
+    },
+    "Environmental": {
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "canUploadFiles": false,
+      "canReview": true,
+      "canApprove": true
+    },
+    "Electrical": {
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "canUploadFiles": false,
+      "canReview": true,
+      "canApprove": true
+    },
+    "Civil": {
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "canUploadFiles": false,
+      "canReview": true,
+      "canApprove": true
+    },
+    "Permitting": {
+      "permissions": ["view_files", "add_comments", "approve_reject"],
+      "canUploadFiles": false,
+      "canReview": true,
+      "canApprove": true
+    }
+  }
+}
