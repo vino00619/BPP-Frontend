@@ -272,53 +272,97 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
-                gap: 2,
-                p: 1.5,
+                flexDirection: "column",
+                gap: 1,
+                p: 2,
                 borderRadius: 2,
                 backgroundColor: theme.palette.background.paper,
                 border: `1px solid ${theme.palette.divider}`,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
               }}
             >
-              <Avatar
-                sx={{
-                  width: 36,
-                  height: 36,
-                  bgcolor: theme.palette.primary.main,
-                  color: theme.palette.primary.contrastText,
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                }}
-              >
-                {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-              </Avatar>
-              <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                <Typography
-                  variant="body2"
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar
                   sx={{
+                    width: 40,
+                    height: 40,
+                    bgcolor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText,
+                    fontSize: "1rem",
                     fontWeight: 600,
-                    color: theme.palette.text.primary,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    border: `2px solid ${theme.palette.background.paper}`,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                   }}
                 >
-                  {user.name || "User"}
+                  {user.name ? user.name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
+                </Avatar>
+                <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 600,
+                      color: theme.palette.text.primary,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {user.name || user.username}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: theme.palette.primary.main,
+                      display: "block",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {user.role}
+                  </Typography>
+                </Box>
+              </Box>
+              
+              <Divider sx={{ my: 1 }} />
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                  }}
+                >
+                  <span style={{ fontWeight: 500 }}>Email:</span> 
+                  {user.email}
                 </Typography>
                 <Typography
                   variant="caption"
                   sx={{
                     color: theme.palette.text.secondary,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "block",
-                    mb: 0.5
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
                   }}
                 >
-                  {user.role || "Role not assigned"}
+                  <span style={{ fontWeight: 500 }}>Department:</span> 
+                  {user.department}
                 </Typography>
-
+                {user.id && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: theme.palette.text.secondary,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                    }}
+                  >
+                    <span style={{ fontWeight: 500 }}>ID:</span> 
+                    {user.id}
+                  </Typography>
+                )}
               </Box>
             </Box>
             
@@ -353,10 +397,14 @@ const Sidebar = ({ user, width = 240, currentView, onNavigate }) => {
 
 Sidebar.propTypes = {
   user: PropTypes.shape({
+    id: PropTypes.string,
+    username: PropTypes.string,
     name: PropTypes.string,
     email: PropTypes.string,
     role: PropTypes.string,
     department: PropTypes.string,
+    permissions: PropTypes.arrayOf(PropTypes.string),
+    createdAt: PropTypes.string
   }),
   width: PropTypes.number,
   currentView: PropTypes.string,
