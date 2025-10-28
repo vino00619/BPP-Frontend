@@ -49,6 +49,7 @@ const DashboardLayout = ({
 
   const handleLogout = () => {
     handleMenuClose();
+    window.location.href = 'https://bpp-dashboards.netlify.app/';
     console.log('Logout functionality - to be implemented');
   };
 
