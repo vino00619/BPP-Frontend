@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -31,7 +32,7 @@ const DashboardLayout = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -48,8 +49,8 @@ const DashboardLayout = ({
   };
 
   const handleLogout = () => {
-    window.location.href = 'https://bpp-dashboards.netlify.app/';
     handleMenuClose();
+    navigate('/login');
     console.log('Logout functionality - to be implemented');
   };
 
