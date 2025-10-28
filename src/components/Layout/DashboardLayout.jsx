@@ -50,6 +50,7 @@ const DashboardLayout = ({
 
   const handleLogout = () => {
     handleMenuClose();
+    localStorage.clear();
     navigate('/login');
     console.log('Logout functionality - to be implemented');
   };
