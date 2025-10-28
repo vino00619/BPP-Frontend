@@ -51,7 +51,7 @@ const DashboardLayout = ({
   const handleLogout = () => {
     handleMenuClose();
     localStorage.clear();
-    window.location.href = '/';
+    window.location.replace('https://bpp-dashboards.netlify.app/');
     console.log('Logout functionality - redirected to root');
   };
 
