@@ -51,8 +51,8 @@ const DashboardLayout = ({
   const handleLogout = () => {
     handleMenuClose();
     localStorage.clear();
-    navigate('/login');
-    console.log('Logout functionality - to be implemented');
+    window.location.href = '/';
+    console.log('Logout functionality - redirected to root');
   };
 
   // Use provided sidebar content or default
